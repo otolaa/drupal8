@@ -61,7 +61,7 @@ function cbr_xml_get_cbr($ignore_cache = FALSE){
 }
 
 /* Implements hook_cron(). */
-function helloworld_cron() {
+function cbr_cron() {
     /* If 60 minutes passed since last time. */
     if ((REQUEST_TIME - \Drupal::state()->get('system.cron_last')) > 3600) {
         // Do something.

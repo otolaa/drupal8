@@ -1,0 +1,71 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\Core\Cache\Cache;
+
+/* Implements hook_preprocess_HOOK() for block templates. */
+function cbr_preprocess_block(&$variables) {
+    /* if ($variables['plugin_id'] == 'search_form_block') {
+        $variables['attributes']['role'] = 'search';
+    }*/
+}
+
+/* XML_RETURN */
+function cbr_parser_xml_return(){
+    $cbr_xml_ = NULL;
+    $date_ = date("d/m/Y", time());
+
+    $url = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=".$date_."";
+    $xml = simplexml_load_file($url);
+    if($xml ===  FALSE){
+        // deal with error
+        return FALSE;
+    }
+
+    //
+    $dt_ = (string)$xml->attributes()->Date;
+    $header_ = "Центральный банк Российской Федерации установил с ". $dt_ ." следующие курсы иностранных валют к рублю Российской Федерации без обязательств Банка России покупать или продавать указанные валюты по данному курсу";
+
+    $cbr = array();
+    $i=0;
+    foreach ($xml->Valute AS $currency_){
+        foreach ($currency_ AS $val_){
+            $cbr[$i][] = (string)$val_;
+        }
+        $i++;
+    }
+
+    $cbr_block_ = array();
+    $cbr_block_[0] = array('names'=> ['data' => ['#markup' => '<span class="currency_title" title="'.$cbr[10][3].'">'.$cbr[10][1].' / RUB</span>']], 'date'=>['data' => ['#markup' => '<span class="currency_date">'.$dt_ .'</span>']], 'rates'=>['data' => ['#markup' => '<span class="currency_description" title="За '.$cbr[10][2].'">'.$cbr[10][4].'</span>']]);
+    $cbr_block_[1] = array('names'=> ['data' =>['#markup' => '<span class="currency_title" title="'.$cbr[11][3].'">'.$cbr[11][1].' / RUB</span>']], 'date'=>['data' => ['#markup' => '<span class="currency_date">'.$dt_ .'</span>']], 'rates'=>['data' => ['#markup' => '<span class="currency_description" title="За '.$cbr[11][2].'">'.$cbr[11][4].'</span>']]);
+    $cbr_block_[2] = array('names'=> ['data' =>['#markup' => '<span class="currency_title" title="'.$cbr[2][3].'">'.$cbr[2][1].' / RUB</span>']], 'date'=>['data' => ['#markup' => '<span class="currency_date">'.$dt_ .'</span>']], 'rates'=>['data' => ['#markup' => '<span class="currency_description" title="За '.$cbr[2][2].'">'.$cbr[2][4].'</span>']]);
+
+    $cbr_xml_ = array('headers'=>$header_, 'oll'=> "<div class='val'><a href='/cbrxml'>ВЕСЬ КУРС ВАЛЮТ</a></div>", 'cbr_block'=>$cbr_block_,  'cbr'=>$cbr,);
+    return $cbr_xml_;
+}
+
+/* XML */
+function cbr_xml_get_cbr($ignore_cache = FALSE){
+    $cid = 'cbr_xml_get:'.\Drupal::languageManager()->getCurrentLanguage()->getId();
+    $cbr_xml_ = NULL;
+    if (!$ignore_cache && $cache = \Drupal::cache()->get($cid)) {
+        $cbr_xml_ = $cache->data;
+    }
+    else {
+        $cbr_xml_ = cbr_parser_xml_return();
+        if($cbr_xml_){
+            \Drupal::cache()->set($cid, $cbr_xml_);
+        }
+    }
+    return $cbr_xml_;
+}
+
+/* Implements hook_cron(). */
+function helloworld_cron() {
+    /* If 60 minutes passed since last time. */
+    if ((REQUEST_TIME - \Drupal::state()->get('system.cron_last')) > 3600) {
+        // Do something.
+        cbr_xml_get_cbr(TRUE);
+    }
+}
+    

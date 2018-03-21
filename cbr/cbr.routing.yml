@@ -1,0 +1,11 @@
+cbr.cbrxml:
+  path: '/cbrxml'
+  defaults:
+    _controller: '\Drupal\cbr\Controller\cbrController::cbrXml'
+  requirements:
+    # We will only show the page to those who have rights to view the content.
+    # _permission: 'view content'
+    # all uniquely
+    _access: 'TRUE'
+    # check by code
+    #_custom_access: '\Drupal\cbr\Controller\cbrController::access'

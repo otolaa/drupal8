@@ -1,0 +1,6 @@
+name: CBR.RU
+description: 'CBR.RU - currency, parsing XML'
+type: module
+core: 8.x
+version: 1.0
+package: Custom

@@ -40,11 +40,22 @@ class CollectWeatherSettings extends ConfigFormBase {
         $config = $this->config('weather.collect_weather.settings');
         // Add a field for the ability to set the default phone.
         // Next we will use this value in the previous form.
+        $descriptionArr = [
+            'moscow'=>'https://yandex.ru/pogoda/moscow/details',
+            'petersburg'=>'https://yandex.ru/pogoda/saint-petersburg/details',
+            'yekaterinburg'=>'https://yandex.ru/pogoda/yekaterinburg/details',
+            'novosibirsk'=>'https://yandex.ru/pogoda/novosibirsk/details',
+            'kaliningrad'=>'https://yandex.ru/pogoda/kaliningrad/details',
+            'krasnoyarsk'=>'https://yandex.ru/pogoda/krasnoyarsk/details',
+            'kazan'=>'https://yandex.ru/pogoda/kazan/details',
+            'ufa'=>'https://yandex.ru/pogoda/ufa/details',
+            'chelyabinsk'=>'https://yandex.ru/pogoda/chelyabinsk/details',
+        ];
         $form['default_weather_number'] = array(
             '#type' => 'textfield',
             '#title' => $this->t('Default weather parsing'),
             '#default_value' => ($config->get('weather_number')?$config->get('weather_number'):"https://yandex.ru/pogoda/moscow/details"),
-            '#description' => "https://yandex.ru/pogoda/moscow/details <br> https://yandex.ru/pogoda/saint-petersburg/details <br> https://yandex.ru/pogoda/yekaterinburg/details <br> https://yandex.ru/pogoda/novosibirsk/details <br> https://yandex.ru/pogoda/kaliningrad/details",
+            '#description' => implode("<br>",$descriptionArr),
         );
         // Subit is inherited from ConfigFormBase
         return parent::buildForm($form, $form_state);

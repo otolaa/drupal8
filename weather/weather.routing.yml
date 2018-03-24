@@ -1,0 +1,18 @@
+weather.weatherXml:
+  path: '/weather'
+  defaults:
+    _controller: '\Drupal\weather\Controller\weatherController::weatherXml'
+  requirements:
+    # We will only show the page to those who have rights to view the content.
+    # _permission: 'view content'
+    # all uniquely
+    _access: 'TRUE'
+    # check by code
+    #_custom_access: '\Drupal\weather\Controller\weatherController::access'
+collect_weather.admin_settings:
+  path: '/admin/config/weather'
+  defaults:
+    _form: '\Drupal\weather\Form\CollectWeatherSettings'
+    _title: 'Weather URL parsing'
+  requirements:
+    _permission: 'administer site configuration'

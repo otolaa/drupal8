@@ -1,0 +1,7 @@
+name: Weather
+description: 'Weather - parsing yandex.ru/pogoda'
+type: module
+core: 8.x
+version: 1.0
+package: Custom
+configure: collect_weather.admin_settings

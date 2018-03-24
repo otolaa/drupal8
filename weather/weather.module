@@ -20,7 +20,13 @@ function weather_xml_get($ignore_cache = FALSE){
     else {
         $weather_xml_ = weatherAPI::returnXML();
         if($weather_xml_){
+            // Here you need an algorithm to save the xml file on the server
+            file_put_contents(dirname(__FILE__)."/src/parser_weather.txt", serialize($weather_xml_));
+            // save the array to the cache
             \Drupal::cache()->set($cid, $weather_xml_);
+        }else{
+            // If there is no parsing channel then you need to take from the file on the server
+            $weather_xml_ = unserialize(file_get_contents(dirname(__FILE__)."/src/parser_weather.txt"));
         }
     }
     return $weather_xml_;

@@ -1,5 +1,4 @@
 <?php
-
 use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 
@@ -14,7 +13,6 @@ function cbr_preprocess_block(&$variables) {
 function cbr_parser_xml_return(){
     $cbr_xml_ = NULL;
     $date_ = date("d/m/Y", time());
-
     $url = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=".$date_."";
     $xml = simplexml_load_file($url);
     if($xml ===  FALSE){
@@ -54,7 +52,13 @@ function cbr_xml_get_cbr($ignore_cache = FALSE){
     else {
         $cbr_xml_ = cbr_parser_xml_return();
         if($cbr_xml_){
+            // Here you need an algorithm to save the xml file on the server
+            file_put_contents(dirname(__FILE__)."/src/parser_cbr.txt", serialize($cbr_xml_));
+            // save the array to the cache
             \Drupal::cache()->set($cid, $cbr_xml_);
+        }else{
+            // If there is no parsing channel then you need to take from the file on the server
+            $cbr_xml_ = unserialize(file_get_contents(dirname(__FILE__)."/src/parser_cbr.txt"));
         }
     }
     return $cbr_xml_;

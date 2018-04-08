@@ -1,0 +1,12 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\Core\Cache\Cache;
+
+//
+function empty_front_page_preprocess_html(&$variables) {
+    // this function leaves only the name of the site in the title
+    if(\Drupal::service('path.matcher')->isFrontPage()){
+        unset($variables['head_title']['title']);
+    }
+}

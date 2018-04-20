@@ -1,0 +1,5 @@
+span.price_usd{ font-weight:bold; }
+span.nameCurrency{ font-size: 1.2em; }
+span.negative_change{ color:#990000; font-weight:bold; }
+span.positive_change{ color:#008f3e; font-weight:bold; }
+div.coinmarketcap_all{ text-align:center; font-size:10px; text-transform: uppercase; }

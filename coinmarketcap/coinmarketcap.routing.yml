@@ -1,0 +1,18 @@
+coinmarketcap.coinmarketcapApi:
+  path: '/coinmarketcap'
+  defaults:
+    _controller: '\Drupal\coinmarketcap\Controller\coinmarketcapController::coinmarketcapApi'
+  requirements:
+    # We will only show the page to those who have rights to view the content.
+    # _permission: 'view content'
+    # all uniquely
+    _access: 'TRUE'
+    # check by code
+    #_custom_access: '\Drupal\coinmarketcap\Controller\coinmarketcapController::access'
+collect_coinmarketcap.admin_settings:
+  path: '/admin/config/coinmarketcap'
+  defaults:
+    _form: '\Drupal\coinmarketcap\Form\CollectCoinmarketcapSettings'
+    _title: 'Number of currencies in the block'
+  requirements:
+    _permission: 'administer site configuration'

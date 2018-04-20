@@ -1,0 +1,7 @@
+name: Coinmarketcap
+description: 'coinmarketcap - coinmarketcap.com'
+type: module
+core: 8.x
+version: 1.0
+package: Custom
+configure: collect_coinmarketcap.admin_settings

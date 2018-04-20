@@ -1,0 +1,53 @@
+<?php
+use Drupal\Core\Url;
+use Drupal\Core\Cache\Cache;
+
+/* Implements hook_preprocess_HOOK() for block templates. */
+function coinmarketcap_preprocess_block(&$variables) {
+    /* if ($variables['plugin_id'] == 'search_form_block') {
+        $variables['attributes']['role'] = 'search';
+    }*/
+}
+
+/* JSON_RETURN */
+function coinmarketcap_parser_return(){
+    $coin_arr_ = NULL;
+    $str = file_get_contents('https://api.coinmarketcap.com/v1/ticker/?limit=100');
+    if($str ===  FALSE){
+        // deal with error
+        return FALSE;
+    }
+    $coin_arr_ = ["date"=>time(), 'oll'=> "<div class='coinmarketcap_all'><a href='/coinmarketcap'>".t("View All")."</a></div>", "currency"=>json_decode($str, true)];
+    return $coin_arr_;
+}
+
+/**/
+function coinmarketcap_get_api($ignore_cache = FALSE){
+    $cid = 'coinmarketcap_get_api:'.\Drupal::languageManager()->getCurrentLanguage()->getId();
+    $coin_arr_ = NULL;
+    if (!$ignore_cache && $cache = \Drupal::cache()->get($cid)) {
+        $coin_arr_ = $cache->data;
+    }else{
+        $coin_arr_ = coinmarketcap_parser_return();
+        if($coin_arr_){
+            // Here you need an algorithm to save the xml file on the server
+            file_put_contents(dirname(__FILE__)."/src/coinmarketcap_get.txt", serialize($coin_arr_));
+            // save the array to the cache
+            \Drupal::cache()->set($cid, $coin_arr_);
+        }else{
+            // If there is no parsing channel then you need to take from the file on the server
+            $coin_arr_ = unserialize(file_get_contents(dirname(__FILE__)."/src/coinmarketcap_get.txt"));
+        }
+    }
+    return $coin_arr_;
+}
+
+/* Implements hook_cron(). */
+function coinmarketcap_cron() {
+    /* If 60 minutes passed since last time. */
+    if ((REQUEST_TIME - \Drupal::state()->get('system.cron_last')) > 3600) {
+        // Do something.
+        coinmarketcap_get_api(TRUE);
+    }
+}
+    

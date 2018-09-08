@@ -9,4 +9,4 @@ I think it was possible to add the necessary fixes for the module to work
 # 4. coinmarketcap
 this is the parsing module which parses https://coinmarketcap.com/api/
 # 5. yandex_map_block
-forms the address on the map Yandex Map for block
+forms the address on the Yandex Map for block

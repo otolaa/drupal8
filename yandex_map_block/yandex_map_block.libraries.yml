@@ -1,0 +1,23 @@
+# add library
+yandex_map_block:
+  version: 1.x
+  css:
+    base:
+      css/yandex_map_block.css: {}
+  js:
+    https://api-maps.yandex.ru/2.1/?lang=ru_RU: {type: external}
+    js/yandex_map_block.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings
+
+yandex_map_form:
+  version: 1.x
+  js:
+    https://api-maps.yandex.ru/2.1/?lang=ru_RU: {type: external}
+    js/yandex_map_form.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings

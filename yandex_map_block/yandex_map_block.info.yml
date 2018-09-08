@@ -1,0 +1,6 @@
+name: Yandex Maps in Block
+description: Displays a Yandex map in a block
+core: 8.x
+type: module
+package: Custom
+configure: collect_yandex_map_block.admin_settings

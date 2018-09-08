@@ -1,0 +1,32 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\Core\Cache\Cache;
+
+/**
+ * @param array $attachments
+ * Implements hook_page_attachments()
+ */
+function yandex_map_block_page_attachments(array &$attachments){
+    /**/
+}
+
+/**
+ * @param $variables
+ * Implements hook_preprocess_page()
+ */
+function yandex_map_block_preprocess_page(&$variables){
+    /* dpm($variables); */
+}
+
+/**
+ * @param array $types
+ * Implements hook_element_info_alter()
+ */
+function yandex_map_block_element_info_alter(array &$types) {
+  /*
+  if (isset($types['textarea'])) {
+    $types['table']['#attached']['library'][] = 'yandex_map_block/yandex_map_block';
+  }
+  */
+}

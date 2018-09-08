@@ -57,7 +57,7 @@ class coinmarketcapBlock extends BlockBase {
                     if(!in_array($code,["name","price_usd","percent_change_24h"])) continue;
                     switch ($code){
                         case "price_usd":
-                            $val_ = '<span class="price_usd">$ '.$val_.'</span>';
+                            $val_ = '<span class="price_usd">$ '.round($val_,3).'</span>';
                             break;
                         case "percent_change_24h":
                             $sc_ = ($val_>0?'positive_change':'negative_change');

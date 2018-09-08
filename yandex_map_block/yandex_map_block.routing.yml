@@ -1,0 +1,7 @@
+collect_yandex_map_block.admin_settings:
+  path: '/admin/config/yandex_map_block'
+  defaults:
+    _form: '\Drupal\yandex_map_block\Form\CollectYandexMapBlockSettings'
+    _title: 'Settings Yandex map in block'
+  requirements:
+    _permission: 'administer site configuration'

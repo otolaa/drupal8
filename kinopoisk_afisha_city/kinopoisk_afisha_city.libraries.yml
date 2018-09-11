@@ -1,0 +1,6 @@
+# Testin library
+kinopoisk_afisha_city:
+  version: 1.x
+  css:
+    base:
+      css/kinopoisk_afisha_city.css: {}

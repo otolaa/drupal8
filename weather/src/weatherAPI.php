@@ -4,7 +4,9 @@ namespace Drupal\weather;
 class weatherAPI{
     public static function returnXML(){
         $weatherResult = NULL;
-        require_once(dirname(__FILE__) . '/phpQuery/phpQuery.php');
+        if (!class_exists("phpQuery")) {
+            require_once(dirname(__FILE__) . '/phpQuery/phpQuery.php');
+        }
         $PARAM_PARSER = file_get_contents(\Drupal::config('weather.collect_weather.settings')->get('weather_number'));
         if($PARAM_PARSER ===  FALSE){
             return FALSE;

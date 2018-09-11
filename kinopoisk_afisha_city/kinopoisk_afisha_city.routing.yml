@@ -1,0 +1,18 @@
+kinopoisk_afisha_city.kinopoiskXml:
+  path: '/kinopoisk'
+  defaults:
+    _controller: '\Drupal\kinopoisk_afisha_city\Controller\kinopoiskController::kinopoiskXml'
+  requirements:
+    # We will only show the page to those who have rights to view the content.
+    # _permission: 'view content'
+    # all uniquely
+    _access: 'TRUE'
+    # check by code
+    #_custom_access: '\Drupal\weather\Controller\weatherController::access'
+collect_kinopoisk.admin_settings:
+  path: '/admin/config/kinopoisk'
+  defaults:
+    _form: '\Drupal\kinopoisk_afisha_city\Form\CollectKinopoiskSettings'
+    _title: 'Kinopoisk page parsing'
+  requirements:
+    _permission: 'administer site configuration'

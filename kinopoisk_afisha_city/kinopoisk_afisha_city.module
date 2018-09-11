@@ -1,0 +1,42 @@
+<?php
+
+use Drupal\kinopoisk_afisha_city\kacAPI;
+use Drupal\Core\Url;
+use Drupal\Core\Cache\Cache;
+
+/* Implements hook_preprocess_HOOK() for block templates. */
+function kinopoisk_afisha_city_preprocess_block(&$variables) {
+    /* if ($variables['plugin_id'] == 'search_form_block') {
+        $variables['attributes']['role'] = 'search';
+    }*/
+}
+
+function kinopoisk_afisha_city_xml_get($ignore_cache = FALSE){
+    $cid = 'kinopoisk_afisha_city_xml_get:'.\Drupal::languageManager()->getCurrentLanguage()->getId();
+    $kac_xml_ = NULL;
+    if (!$ignore_cache && $cache = \Drupal::cache()->get($cid)) {
+        $kac_xml_ = $cache->data;
+    }
+    else {
+        $kac_xml_ = kacAPI::returnXML();
+        if($kac_xml_){
+            // Here you need an algorithm to save the xml file on the server
+            file_put_contents(dirname(__FILE__)."/src/parser_kac.txt", serialize($kac_xml_));
+            // save the array to the cache
+            \Drupal::cache()->set($cid, $kac_xml_);
+        }else{
+            // If there is no parsing channel then you need to take from the file on the server
+            $kac_xml_ = unserialize(file_get_contents(dirname(__FILE__)."/src/parser_kac.txt"));
+        }
+    }
+    return $kac_xml_;
+}
+
+/* Implements hook_cron(). */
+function kinopoisk_afisha_city_cron() {
+    /* If 60 minutes passed since last time. */
+    if ((REQUEST_TIME - \Drupal::state()->get('system.cron_last')) > 3600) {
+        // Do something.
+        kinopoisk_afisha_city_xml_get(TRUE);
+    }
+}

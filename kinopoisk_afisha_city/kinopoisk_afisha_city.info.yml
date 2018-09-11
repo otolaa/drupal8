@@ -1,0 +1,7 @@
+name: Kinopoisk parsing
+description: 'Kinopoisk - parsing www.kinopoisk.ru/afisha/city/'
+type: module
+core: 8.x
+version: 1.0
+package: Custom
+configure: collect_kinopoisk.admin_settings

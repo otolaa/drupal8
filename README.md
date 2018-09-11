@@ -10,3 +10,5 @@ I think it was possible to add the necessary fixes for the module to work
 this is the parsing module which parses https://coinmarketcap.com/api/
 # 5. yandex_map_block
 forms the address on the Yandex Map for block
+# 6. kinopoisk_afisha_city
+this is the parsing module schedule for cities film on the kinopoisk.ru

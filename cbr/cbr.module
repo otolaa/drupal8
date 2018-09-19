@@ -9,22 +9,19 @@ function cbr_preprocess_block(&$variables) {
     }*/
 }
 
-/* XML_RETURN */
-function cbr_parser_xml_return(){
-    $cbr_xml_ = NULL;
+/* ARRAY_RETURN */
+function cbr_parser_return(){
+    $cbr_arr = NULL;
     $date_ = date("d/m/Y", time());
-    $url = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=".$date_."";
+    $url = "http://www.cbr.ru/scripts/XML_daily.asp";
     $xml = simplexml_load_file($url);
     if($xml ===  FALSE){
         // deal with error
         return FALSE;
     }
-
     //
     $dt_ = (string)$xml->attributes()->Date;
-    $header_ = "Центральный банк Российской Федерации установил с ". $dt_ ." следующие курсы иностранных валют к рублю Российской Федерации без обязательств Банка России покупать или продавать указанные валюты по данному курсу";
-
-    $cbr = array();
+    $cbr = [];
     $i=0;
     foreach ($xml->Valute AS $currency_){
         foreach ($currency_ AS $val_){
@@ -32,36 +29,36 @@ function cbr_parser_xml_return(){
         }
         $i++;
     }
-
-    $cbr_block_ = array();
-    $cbr_block_[0] = array('names'=> ['data' => ['#markup' => '<span class="currency_title" title="'.$cbr[10][3].'">'.$cbr[10][1].' / RUB</span>']], 'date'=>['data' => ['#markup' => '<span class="currency_date">'.$dt_ .'</span>']], 'rates'=>['data' => ['#markup' => '<span class="currency_description" title="За '.$cbr[10][2].'">'.$cbr[10][4].'</span>']]);
-    $cbr_block_[1] = array('names'=> ['data' =>['#markup' => '<span class="currency_title" title="'.$cbr[11][3].'">'.$cbr[11][1].' / RUB</span>']], 'date'=>['data' => ['#markup' => '<span class="currency_date">'.$dt_ .'</span>']], 'rates'=>['data' => ['#markup' => '<span class="currency_description" title="За '.$cbr[11][2].'">'.$cbr[11][4].'</span>']]);
-    $cbr_block_[2] = array('names'=> ['data' =>['#markup' => '<span class="currency_title" title="'.$cbr[2][3].'">'.$cbr[2][1].' / RUB</span>']], 'date'=>['data' => ['#markup' => '<span class="currency_date">'.$dt_ .'</span>']], 'rates'=>['data' => ['#markup' => '<span class="currency_description" title="За '.$cbr[2][2].'">'.$cbr[2][4].'</span>']]);
-
-    $cbr_xml_ = array('headers'=>$header_, 'oll'=> "<div class='val'><a href='/cbrxml'>ВЕСЬ КУРС ВАЛЮТ</a></div>", 'cbr_block'=>$cbr_block_,  'cbr'=>$cbr,);
-    return $cbr_xml_;
+    $cbr_arr = ["DATE"=>$dt_, "ITEMS"=>$cbr];
+    return $cbr_arr;
 }
 
 /* XML */
-function cbr_xml_get_cbr($ignore_cache = FALSE){
-    $cid = 'cbr_xml_get:'.\Drupal::languageManager()->getCurrentLanguage()->getId();
-    $cbr_xml_ = NULL;
+function cbr_get($ignore_cache = FALSE){
+    $cid = 'cbr_get:'.\Drupal::languageManager()->getCurrentLanguage()->getId();
+    $cbr_arr = NULL;
     if (!$ignore_cache && $cache = \Drupal::cache()->get($cid)) {
-        $cbr_xml_ = $cache->data;
+        $cbr_arr = $cache->data;
     }
     else {
-        $cbr_xml_ = cbr_parser_xml_return();
-        if($cbr_xml_){
+        $cbr_parser = cbr_parser_return();
+        if($cbr_parser){
+            //
+            $res = unserialize(file_get_contents(dirname(__FILE__)."/src/parser_cbr.txt"));
+            $res = $res?$res:[];
+            $res = count($res)?array_merge([$cbr_parser['DATE']=>$cbr_parser],$res):[$cbr_parser['DATE']=>$cbr_parser];
+            $res = array_slice($res, 0, 10);   // returns a slice of an array of 10 elements
+            $cbr_arr = $res;
             // Here you need an algorithm to save the xml file on the server
-            file_put_contents(dirname(__FILE__)."/src/parser_cbr.txt", serialize($cbr_xml_));
+            file_put_contents(dirname(__FILE__)."/src/parser_cbr.txt", serialize($cbr_arr));
             // save the array to the cache
-            \Drupal::cache()->set($cid, $cbr_xml_);
+            \Drupal::cache()->set($cid, $cbr_arr);
         }else{
             // If there is no parsing channel then you need to take from the file on the server
-            $cbr_xml_ = unserialize(file_get_contents(dirname(__FILE__)."/src/parser_cbr.txt"));
+            $cbr_arr = unserialize(file_get_contents(dirname(__FILE__)."/src/parser_cbr.txt"));
         }
     }
-    return $cbr_xml_;
+    return $cbr_arr;
 }
 
 /* Implements hook_cron(). */
@@ -69,7 +66,7 @@ function cbr_cron() {
     /* If 60 minutes passed since last time. */
     if ((REQUEST_TIME - \Drupal::state()->get('system.cron_last')) > 3600) {
         // Do something.
-        cbr_xml_get_cbr(TRUE);
+        cbr_get(TRUE);
     }
 }
     

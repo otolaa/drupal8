@@ -19,20 +19,30 @@ class cbrController extends ControllerBase {
     /**/
     public function cbrXml() {
         $content = "";
-        $vb_ = cbr_xml_get_cbr();
-        $content .= "<div class='headers'>".$vb_['headers']."</div>";
+        $content .= "";
+        $CBR = cbr_get();
+        $fruit = array_shift($CBR);
+        $second = array_shift($CBR);
+        foreach ($fruit['ITEMS'] as $k => &$cur) {
+            //
+            $cur[4] = (float)str_replace(",", ".", $cur[4]);
+            $difference = round($cur[4] - (float)str_replace(",", ".", $second['ITEMS'][$k][4]), 4);
+            $cur[4] = $cur[4].($difference>0?"↑":"↓");
+            $cur[] = ($difference>0?"+":"").$difference;
+        }
         $header = array(
             array('data' => "Цифр. код"),
             array('data' => "Букв. код"),
             array('data' => "Единиц"),
             array('data' => "Валюта"),
             array('data' => "Курс"),
-            //  array('data' => '↑↓'),
+            array('data' => '↑↓'),
         );
+        $rows = $fruit['ITEMS'];
         $table = array(
             '#type' => 'table',
             '#header' => $header,
-            '#rows' =>  ($vb_['cbr']?$vb_['cbr']:""),
+            '#rows' =>  $rows?$rows:[],
             '#attributes' => array(
                 'id' => 'cbr-modules-table-content',
             ),
@@ -40,7 +50,7 @@ class cbrController extends ControllerBase {
         $content .= drupal_render($table);
         //
         $output = array();
-        $output['#title'] = t('КУРС ВАЛЮТ CBR.RU');
+        $output['#title'] = $this->t('КУРС ВАЛЮТ')." ".($fruit['DATE']?$fruit['DATE']:'');
         $output['#markup'] = $content;
         return $output;
     }

@@ -16,5 +16,9 @@ this is the parsing module which parses https://coinmarketcap.com/api/
 ![coinmarketcap.com](https://github.com/otolaa/drupal8/blob/master/img/criptoDrupal8.png "coinmarketcap.com")
 # 5. yandex_map_block
 forms the address on the Yandex Map for block
+
+![Yandex Map for block](https://github.com/otolaa/drupal8/blob/master/img/yandexBlock.jpg "Yandex Map for block")
 # 6. kinopoisk_afisha_city
 this is the parsing module schedule for cities film on the kinopoisk.ru
+
+![kinopoisk for block](https://github.com/otolaa/drupal8/blob/master/img/kinoDrupal8.png "kinopoisk for block")

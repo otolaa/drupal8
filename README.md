@@ -22,3 +22,6 @@ forms the address on the Yandex Map for block
 this is the parsing module schedule for cities film on the kinopoisk.ru
 
 ![kinopoisk for block](https://github.com/otolaa/drupal8/blob/master/img/kinoDrupal8.png "kinopoisk for block")
+kinopoisk for pages
+
+![kinopoisk for pages](https://github.com/otolaa/drupal8/blob/master/img/kinoList.jpg "kinopoisk for pages")

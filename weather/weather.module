@@ -18,7 +18,7 @@ function weather_xml_get($ignore_cache = FALSE){
         $weather_xml_ = $cache->data;
     }
     else {
-        $weather_xml_ = weatherAPI::returnXML();
+        $weather_xml_ = weatherAPI::weatherParserXpath();
         if($weather_xml_){
             // Here you need an algorithm to save the xml file on the server
             file_put_contents(dirname(__FILE__)."/src/parser_weather.txt", serialize($weather_xml_));

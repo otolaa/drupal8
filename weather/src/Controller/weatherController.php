@@ -22,41 +22,42 @@ class weatherController extends ControllerBase {
         $output = array();
         $output['#title'] = t('Weather');
         $output['#attached']['library'][] = 'weather/weather';
-        $wxg_ = weather_xml_get();
-        if(!$wxg_){
+        $WXG = weather_xml_get();
+        //dpm($WXG);
+        if(!$WXG){
             return $output;
         }else{
-            $content .= "<p>".$wxg_['HEADER']."</p>";
+            $content .= $WXG['HEADER'];
             //
-            if(count($wxg_['FORECAST_BRIEF'])) {
-                foreach ($wxg_['FORECAST_BRIEF'] as $idt => $dayArr_) {
-                    // header construction
-                    $table = array(
-                        '#type' => 'table',
-                        '#attributes' => array('id' => 'weather-controller-modules-table-' . $idt . '', 'class' => ['weather-controller-modules-table']),
+            if(count($WXG['WEEK_TABLE'])) {
+                $table = array(
+                    '#type' => 'table',
+                    '#attributes' => array('id' => 'weather-controller-modules-table', 'class' => ['weather-controller-modules-table']),
+                );
+                foreach ($WXG['WEEK_TABLE'] as $t => $DA) {
+                    //
+                    $header = array(
+                        array('data' => ['#markup' => $DA['DAY']], 'colspan' => 3, 'class'=>'weather-header')
                     );
-                    $table["#header"] = array(
-                        array('data' => ['#markup' => '<div class="weather-table__value">' . implode(" ", $dayArr_['DAY']) . '</div>'],),
-                        array('data' => ''),
-                        array('data' => ''),
-                        //
-                    );
-                    foreach ($dayArr_['HEADER'] as $hdr) {
-                        $table["#header"][] = array('data' => ['#markup' => $hdr]);
+                    foreach ($WXG['HEADER_TABLE'] as $hdr) {
+                        $header[] = array('data' => ['#markup' => $hdr], 'class'=>'weather-header');
                     }
-                    foreach ($dayArr_['DATA'] as $dt) {
-                        $rowsArr = array();
-                        foreach ($dt as $code => $dArr) {
-                            $rowsArr['date_' . $code] = ['data' => ['#markup' => $dArr]];
+                    $table["#rows"][] = $header;
+                    foreach ($DA['ITEMS'] as $DT) {
+                        $r = array();
+                        foreach ($DT as $code => $dArr) {
+                            $dArr = ($code == 1 ? '<i class="' . $dArr . '"></i>' : $dArr);
+                            $r['date_' . $code] = ['data' => ['#markup' => is_array($dArr) ? implode("<br>", $dArr) : $dArr]];
                         }
-                        $table["#rows"][] = $rowsArr;
+                        $table["#rows"][] = $r;
                     }
-                    $content .= drupal_render($table);
+                    //
                 }
+                $content .= drupal_render($table);
             }
         }
         //
-        $output['#title'] = $wxg_['CURRENT_WEATHER'];
+        $output['#title'] = $WXG['HEADER_CURRENT'];
         $output['#markup'] = $content;
         return $output;
     }

@@ -44,36 +44,35 @@ class WeatherBlock extends BlockBase {
         $block['#type'] = 'markup';
         $block['#attached']['library'][] = 'weather/weather';
         //
-        $wxg_ = weather_xml_get();
-        if(!$wxg_){
+        $WXG = weather_xml_get();
+        if(!$WXG){
             return $block;
         }else {
-            if(!empty($wxg_['FORECAST_BRIEF'][0])){
+            if(!empty($WXG['WEEK_TABLE'][0])){
                 // header construction
-                $dayArr_ = $wxg_['FORECAST_BRIEF'][0];
+                $DA = $WXG['WEEK_TABLE'][0];
                 $table = array(
                     '#type' => 'table',
                     '#attributes' => array('id' => 'weather-block-modules-table', 'class' => ['weather-block-modules-table']),
                 );
                 $table["#header"] = array(
-                    array('data' => ['#markup' => implode(" ", $dayArr_['DAY'])], 'colspan' => 3),
+                    array('data' => ['#markup' => $DA['DAY']], 'colspan' => 3),
                     //
                 );
-                foreach ($dayArr_['DATA'] as $dt) {
-                    $rowsArr = array();
-                    foreach ($dt as $code => $dArr) {
-                        if($code>2)continue;
-                        $rowsArr['date_' . $code] = ['data' => ['#markup' => $dArr]];
-                    }
-                    $table["#rows"][] = $rowsArr;
+                foreach ($DA['ITEMS'] as $DT) {
+                    $r = [];
+                    $r['date_0'] = ['data' => ['#markup' => implode("<br>", $DT[0])]];
+                    $r['date_1'] = ['data' => ['#markup' => '<i class="'.$DT[1].'"></i>']];
+                    $r['date_2'] = ['data' => ['#markup' => $DT[2]]];
+                    $table["#rows"][] = $r;
                 }
                 $content .= drupal_render($table);
             }
-            $content .= "<div class='weather-url-pages'><a href='/weather'>" . $wxg_['HEADER'] . "</a></div>";
+            $content .= "<div class='weather-url-pages'><a href='/weather'>" . $WXG['HEADER'] . "</a></div>";
             //
         }
         //
-        $block['#title'] = $wxg_['CURRENT_WEATHER'];
+        $block['#title'] = $WXG['HEADER_CURRENT'];
         $block['#markup'] = $content;
         return $block;
     }

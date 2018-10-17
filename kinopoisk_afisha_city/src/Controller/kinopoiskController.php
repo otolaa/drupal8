@@ -20,49 +20,44 @@ class kinopoiskController extends ControllerBase {
     public function kinopoiskXml(){
         $content = "";
         $output = [];
-        $returnARR = kinopoisk_afisha_city_xml_get();
-        if(!$returnARR){
+        $KAC = kac_xml_get();
+        if(!$KAC){
             return $output;
-        }else {
+        }else{
             //
-            foreach ($returnARR['SHOWING'] as $SHOWING) {
-                if (!empty($SHOWING)) {
-                    //
-                    $table = array(
-                        '#type' => 'table',
-                        '#attributes' => array('id' => 'kinopoisk-block-modules-table', 'class' => ['kinopoisk-block-modules-table']),
-                    );
-                    $table["#header"] = array(
-                        array('data' => ['#markup' => $SHOWING['DAY']], 'colspan' => 3),
-                        //
-                    );
-                    $rowsArr = [];
-                    // dpm($SHOWING);
-                    foreach ($SHOWING['FILM'] as $code => $dt) {
-                        $rowsArr[] = [
-                            'date_name' => ['data' => ['#markup' => '<span class="date_name">' . $dt['NAME'] . '</span>']],
-                            'date_age' => ['data' => ['#markup' => '<span class="date_age">' .(strlen($dt['AGE'])>0?$dt['AGE']."+":""). '</span>']],
-                            'date_info' => ['data' => ['#markup' => '<span class="date_info">' . implode("<br>", $dt['INFO']) . '</span>']],
-                        ];
-                        if (count($dt['CINEMA'])) {
-                            //
-                            foreach ($dt['CINEMA'] as $code => $item) {
-                                $rowsArr[] = [
-                                    'date_cinema_name' => ['data' => ['#markup' => '<span class="date_cinema">' . $item['NAME'] . '</span>'], 'colspan' => 2],
-                                    'date_cinema_session' => ['data' => ['#markup' => '<span class="date_session">' . $item['SESSION'] . '</span>']]
-                                ];
-                            }
-                        }
-                    }
-                    $table["#rows"] = $rowsArr;
-                    $content .= drupal_render($table);
+            $table = array(
+                '#type' => 'table',
+                '#attributes' => array('id' => 'kinopoisk-block-modules-table', 'class' => ['kinopoisk-block-modules-table']),
+            );
+            $rowsArr = [];
+            foreach ($KAC['SCHEDULE'] as $SHOWING):
+            if(!empty($SHOWING)) {
+                // dpm($SHOWING);
+                $rowsArr[] = ['header'=>['data' => ['#markup' => $SHOWING['DATE']], 'colspan' => 3, 'class'=>'kino-header']];
+                foreach ($SHOWING['FILM'] as $code => $dt) {
+                    $rowsArr[] = [
+                        'date_name' => ['data' => ['#markup' => $dt['TITLE']], 'class'=>'date_name'],
+                        'date_age' => ['data' => ['#markup' => (strlen($dt['AGE'])>0?$dt['AGE']."+":"")], 'class'=>'date_age'],
+                        'date_info' => ['data' => ['#markup' => implode("<br>", $dt['DESCRIPTION'])], 'class'=>'date_info'],
+                    ];
+                    if(!empty($dt['CINEMA'])): foreach ($dt['CINEMA'] as $CINEMA):
+                        foreach ($CINEMA['TIME'] as $k=>$time):
+                            $rowsArr[] = [
+                                'date_cinema_name' => ['data' => ['#markup' => ($k==0?$CINEMA['TITLE']:"")], 'class'=>'date_cinema'],
+                                'date_cinema_hall' => ['data' => ['#markup' => ($CINEMA['HALL'][$k]?$CINEMA['HALL'][$k]:"")], 'class'=>'date_hall'],
+                                'date_cinema_session' => ['data' => ['#markup' => $time], 'class'=>'date_session'],
+                            ];
+                        endforeach;
+                    endforeach; endif;
                 }
             }
+            endforeach;
+            $table["#rows"] = $rowsArr;
+            $content .= drupal_render($table);
             //
         }
-        $content .= drupal_render($table);
         //
-        $output['#title'] = $returnARR['CITY'];
+        $output['#title'] = $KAC['CITY'];
         $output['#markup'] = $content;
         $output['#attached']['library'][] = 'kinopoisk_afisha_city/kinopoisk_afisha_city';
         return $output;

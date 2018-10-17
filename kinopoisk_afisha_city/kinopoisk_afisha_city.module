@@ -11,14 +11,13 @@ function kinopoisk_afisha_city_preprocess_block(&$variables) {
     }*/
 }
 
-function kinopoisk_afisha_city_xml_get($ignore_cache = FALSE){
-    $cid = 'kinopoisk_afisha_city_xml_get:'.\Drupal::languageManager()->getCurrentLanguage()->getId();
+function kac_xml_get($ignore_cache = FALSE){
+    $cid = 'kac_xml_get:'.\Drupal::languageManager()->getCurrentLanguage()->getId();
     $kac_xml_ = NULL;
     if (!$ignore_cache && $cache = \Drupal::cache()->get($cid)) {
         $kac_xml_ = $cache->data;
-    }
-    else {
-        $kac_xml_ = kacAPI::returnXML();
+    } else {
+        $kac_xml_ = kacAPI::kinoPageXpath();
         if($kac_xml_){
             // Here you need an algorithm to save the xml file on the server
             file_put_contents(dirname(__FILE__)."/src/parser_kac.txt", serialize($kac_xml_));
@@ -37,6 +36,6 @@ function kinopoisk_afisha_city_cron() {
     /* If 60 minutes passed since last time. */
     if ((REQUEST_TIME - \Drupal::state()->get('system.cron_last')) > 3600) {
         // Do something.
-        kinopoisk_afisha_city_xml_get(TRUE);
+        kac_xml_get(TRUE);
     }
 }

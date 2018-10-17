@@ -1,10 +1,12 @@
 /**/
-span.date_name{ color: #005; border-bottom: 0px dashed #005; text-decoration: none; font-weight: bold; text-transform: uppercase; }
-span.date_info{ color: #777; line-height: normal; display: block; max-width: 300px; }
-span.date_age{ color: #008f3e; font-weight: bold; display: block; text-align: center; }
-span.date_cinema{ color: #f60; font-weight: normal; display: block; }
-span.date_session{ display: block; max-width: 300px; }
-span.date_session i, span.date_session b, span.date_session u{ padding: 3px 5px; display: inline-block; font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none; }
-span.date_session i{ color: #aaa; }
-span.date_session b{ color: #005; }
-span.date_session u{ color: #777; }
+.kino-header{ color: #fff; font-weight: bold; font-size: 14px;  background: rgba(0, 0, 0, 0.51); }
+.date_name{ color: #005; border-bottom: 0px dashed #005; text-decoration: none; font-weight: bold; text-transform: uppercase; }
+.date_info{ color: #777; line-height: normal;  max-width: 300px; }
+.date_age{ color: #008f3e; font-weight: bold; text-align: center; }
+.date_cinema{ color: #f60; font-weight: normal; }
+.date_hall{ text-align: center; }
+.date_session{ max-width: 300px; }
+.date_session i, .date_session b, .date_session u{ padding: 3px 5px; display: inline-block; font-size: 14px; font-style: normal; font-weight: normal; text-decoration: none; }
+.date_session i{ color: #aaa; }
+.date_session b{ color: #005; }
+.date_session u{ color: #777; }

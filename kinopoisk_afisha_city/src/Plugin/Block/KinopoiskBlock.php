@@ -44,12 +44,12 @@ class KinopoiskBlock extends BlockBase {
         $block = array();
         $block['#type'] = 'markup';
         // $block['#attached']['library'][] = 'kinopoisk_afisha_city/kinopoisk_afisha_city';
-        //
-        $returnARR = kinopoisk_afisha_city_xml_get();
-        if(!$returnARR){
+
+        $KAC = kac_xml_get();
+        if(!$KAC){
             return $block;
         }else {
-            $SHOWING = $returnARR['SHOWING'][0];
+            $SHOWING = $KAC['SCHEDULE'][0];
             if(!empty($SHOWING)){
                 //
                 $table = array(
@@ -57,16 +57,16 @@ class KinopoiskBlock extends BlockBase {
                     '#attributes' => array('id' => 'kinopoisk-block-modules-table', 'class' => ['kinopoisk-block-modules-table']),
                 );
                 $table["#header"] = array(
-                    array('data' => ['#markup' => $SHOWING['DAY']], 'colspan' => 4),
+                    array('data' => ['#markup' => $SHOWING['DATE']], 'colspan' => 3),
                     //
                 );
                 $rowsArr = [];
                 foreach ($SHOWING['FILM'] as $code =>$dt) {
                    $rowsArr[] = [
-                       'date_name'=> ['data' => ['#markup' => $dt['NAME']]],
-                       'date_age'=> ['data' => ['#markup' => $dt['AGE']."+"]],
-                       'date_info'=> ['data' => ['#markup' => substr($dt['INFO'][0],0,-1)]],
-                       'date_time'=> ['data' => ['#markup' => $dt['INFO'][3]]],
+                       'date_name'=> ['data' => ['#markup' => $dt['TITLE']]],
+                       'date_age'=> ['data' => ['#markup' => $dt['AGE']?$dt['AGE']."+":""]],
+                       'date_info'=> ['data' => ['#markup' => substr($dt['DESCRIPTION'][0],0,-1)]],
+                       //'date_time'=> ['data' => ['#markup' => $dt['INFO'][3]]],
                    ];
                 }
                 $table["#rows"] = $rowsArr;
@@ -76,7 +76,7 @@ class KinopoiskBlock extends BlockBase {
             //
         }
         //
-        $block['#title'] = $returnARR['CITY'];
+        $block['#title'] = $KAC['CITY'];
         $block['#markup'] = $content;
         return $block;
     }

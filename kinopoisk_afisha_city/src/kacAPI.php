@@ -8,68 +8,78 @@ class kacAPI{
         $afisha_city_ = ($afisha_city_?$afisha_city_:1);
         return "https://www.kinopoisk.ru/afisha/city/".$afisha_city_."/";
     }
-    // убирает атрибуты у тегов
-    public static function pr($text){
-        //<b><i><u>
-        $text = strip_tags($text,"<b><i><u>");
-        $text = preg_replace("/<([a-z][a-z0-9]*)[^>]*?(\/?)>/i",'<$1$2>', $text);
-        return $text;
-    }
-    // получаем возраст для фильма
-    public static function age($text){
-        $text = trim(substr($text, -5));
-        $text = str_replace("age", "", $text);
-        return $text;
-    }
-    public static function info($text){
-        $res = [];
-        foreach (explode("</li>",$text) as $t){
-            $res[] = trim(strip_tags($t));
-        }
-        $res = array_filter($res, 'strlen');
-        return $res;
-    }
-    public static function returnXML(){
-        $resArr = NULL;
-        if (!class_exists("phpQuery")) {
-            require_once(dirname(__FILE__) . '/phpQuery/phpQuery.php');
-        }
+    public static function kinoPageXpath()
+    {
+        $res = NULL;
         $PARAM_PARSER = file_get_contents(self::returnPageParsing());
         if($PARAM_PARSER ===  FALSE){
             return FALSE;
         }
-        $doc = \phpQuery::newDocumentHTML($PARAM_PARSER,'utf-8');
-        $resArr["CITY"] = $doc->find('td[colspan="3"] a.all')->text();
-
-        // the showing
-        $showing = $doc->find('div.showing');
-        foreach ($showing as $i=>$el){
-            $q = pq($el);
-            $FILM_ = $q->find('div.films_metro');
-            $FILM_ARR = [];
-            foreach ($FILM_ as $f=>$fil){
-                $qf = pq($fil);
-                $timeArr = [];
-                $space = $qf->find('div.showing_section dl');
-                foreach ($space as $tm){
-                    $time = pq($tm);
-                    $timeArr[] = ["NAME"=>trim($time->find('dt.name')->text()),"SESSION"=>self::pr($time->find('dd.time')->html())];
+        //
+        $doc = new \DOMDocument();
+        $doc->loadHTML($PARAM_PARSER); // from html
+        $xpath = new \DOMXpath($doc);
+        //
+        $body = $xpath->query('//td[@id="block_left"]/div[@class="block_left"]/table/tr/td');
+        $headers = $xpath->query('table/tr/td[@colspan="3"]/table/tr/td[@colspan="3"]/a',$body->item(0))->item(0)->nodeValue;
+        //
+        $filmArr = [];
+        $dtFilm = $xpath->query('div[@class="showing"]',$body->item(0));
+        foreach ($dtFilm as $fl) {
+            //
+            $showDate = $xpath->query('div[@class="showDate"]|div[@class="showDate gray"]',$fl)->item(0)->nodeValue;
+            $fmArr = [];
+            $fm = $xpath->query('div[@class="films_metro "]|div[@class="films_metro"]',$fl);
+            foreach ($fm as $f){
+                $fmn = $xpath->query('div[@class="title _FILM_"]/div/p/a',$f)->item(0)->nodeValue;
+                $age = false;
+                if($age = $xpath->query('div[@class="title _FILM_"]/div/p/span',$f)->item(0)):
+                    $age = explode(" ",$age->getAttribute('class'));
+                    $age = str_replace("age", "", $age[count($age)-1]);
+                endif;
+                // descriptions for films
+                $fmInfoArr = [];
+                $fmInfo = $xpath->query('div[@class="title _FILM_"]/ul/li',$f);
+                foreach ($fmInfo as $fi){
+                    $fmInfoArr[] = $fi->textContent;
+                }
+                // the cinema и т.д.
+                $cinemaArr = [];
+                $cnm = $xpath->query('div[@class="showing_section"]/dl',$f);
+                foreach ($cnm as $cinema) {
+                    $cnn = $xpath->query('dt[@class="name"]',$cinema)->item(0)->textContent; // название кинотеатра и т.д.
+                    // the time
+                    $shArr = [];
+                    foreach ($xpath->query('dd[@class="time"]',$cinema) as $time){
+                        $ibu = [];
+                        foreach ($xpath->query('i|u|b',$time) as $tt){
+                            $ibu[] = "<".$tt->tagName.">".trim($tt->textContent)."</".$tt->tagName.">";
+                        }
+                        $shArr[] = implode(" ",$ibu);
+                    }
+                    // hall
+                    $hallArr = [];
+                    foreach ($xpath->query('dd[@class="hall"]',$cinema) as $hall){
+                        // return html
+                        $hall = $body->item(0)->ownerDocument->saveHTML($hall);
+                        $hall = strip_tags($hall,'<u>');
+                        if(strlen($hall)>1):
+                            if(strpos((string)$hall, "imax") === false){ /**/ }else{ $hall = "IMAX"; }
+                            if(strpos((string)$hall, "3D") === false){ /**/ }else{ $hall = "3D"; }
+                        endif;
+                        // return html CSS и т.д.
+                        $hallArr[] = $hall;
+                    }
+                    $cinemaArr[] = ['TITLE'=>$cnn,'TIME'=>$shArr,'HALL'=>$hallArr];
                 }
                 //
-                $FILM_NAME = trim($qf->find('div[class="title _FILM_"] div p a')->text());
-                $FILM_INFO = self::info($qf->find('div[class="title _FILM_"] ul.film_info')->html());
-                //$FILM_INFO_FIRST = trim($qf->find('div[class="title _FILM_"] ul.film_info li.film_info_first')->text());
-                //$FILM_INFO_TIME = trim($qf->find('div[class="title _FILM_"] ul.film_info li span')->text());
-                $FILM_AGE= self::age($qf->find('div[class="title _FILM_"] div p span')->attr('class'));
-                $FILM_ARR[] = ["NAME"=>$FILM_NAME, "AGE"=>$FILM_AGE, "INFO"=>$FILM_INFO, "CINEMA"=>$timeArr];
+                $fmArr[] = ['TITLE'=>$fmn, 'AGE'=>$age, 'DESCRIPTION'=>$fmInfoArr, 'CINEMA'=>$cinemaArr,];
             }
-            $DAY_ = trim($q->find('div.showDate')->text());
-            $resArr["SHOWING"][] = [
-                "DAY"=>$DAY_,
-                "FILM"=>$FILM_ARR,
-            ];
-        }
+            //
+            $filmArr[] = ['DATE'=>$showDate,'FILM'=>$fmArr];
+        } // end FILMS
+        $res = ['CITY'=>$headers,'SCHEDULE'=>$filmArr];
         //
-        return $resArr;
+        return $res;
     }
 }

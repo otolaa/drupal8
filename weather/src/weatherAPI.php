@@ -10,7 +10,7 @@ class weatherAPI{
         }
         $weatherResult = []; //
         $doc = new \DOMDocument();
-        $doc->loadHTML($PARAM_PARSER); // from html
+        @$doc->loadHTML($PARAM_PARSER); // from html
         $xpath = new \DOMXpath($doc);
         // заголовок
         $h1 = $xpath->query('//div[@class="location-title"]/h1[@class="title title_level_1"]')->item(0)->textContent;
@@ -60,13 +60,13 @@ class weatherAPI{
                 //
                 $rd5 = [];
                 $span = @$xpath->query('div/span/span',$rd->item(5))->item(0);
-                if($span===Null){ /**/ }else {
+                if($span===Null){ /**/ }else{
                     if ($ss = $span->textContent) {
                         $rd5[] = $ss;
                     }
                 }
                 $abbr = @$xpath->query('div/div/abbr',$rd->item(5))->item(0);
-                if($abbr===Null){ /**/ }else {
+                if($abbr===Null){ /**/ }else{
                     if ($ss = $abbr->getAttribute('title')) {
                         $rd5[] = $ss;
                     }

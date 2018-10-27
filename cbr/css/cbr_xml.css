@@ -1,8 +1,8 @@
-span.DOWN{ font-size:16px; color:#990000; }
-span.UP{ font-size:16px; color:#006600; }
-span.currency_title{ font-size:11px;}
-span.currency_date{ font-size:11px; font-weight:bold;}
-span.currency_kod{ font-size:10px; color:#999;}
-span.currency_description{ color:#008f3e; font-weight:bold; font-size:11px;}
+.DOWN{ font-size:16px; color:#990000; }
+.UP{ font-size:16px; color:#006600; }
+.currency_title{ font-size:11px;}
+.currency_date{ font-size:11px; font-weight:bold;}
+.currency_kod{ font-size:10px; color:#999;}
+.currency_description{ font-weight:bold; font-size:11px;}
 div.val{ text-align:center; font-size:10px;}
 div.headers{ font-size:12px; margin-bottom:5px; font-weight:bold; border-bottom:#ccc dashed 1px; padding:4px 2px;}

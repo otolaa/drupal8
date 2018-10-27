@@ -47,28 +47,28 @@ class CbrXmlBlock extends BlockBase {
         $curArr = [];
         if(count($fruit['ITEMS'])) {
             foreach ($fruit['ITEMS'] as $k => &$cur) {
-                if (!in_array($cur[1], ['USD', 'EUR', 'PLN'])) continue;
+                if (!in_array($cur[1], ['USD', 'EUR', 'UAH'])) continue;
                 //
                 $cur[4] = (float)str_replace(",", ".", $cur[4]);
                 $difference = round($cur[4] - (float)str_replace(",", ".", $second['ITEMS'][$k][4]), 4);
-                $cur[4] = $cur[4].($difference>0?"↑":"↓");
-                $cur[] = ($difference>0?"+":"").$difference;
+                $cur[4] = ['data'=>['#markup'=>$cur[4].($difference>0?"↑":"↓")], 'class'=>'currency_description '.($difference>0?'UP':'DOWN').''];
+                $cur[] = ['data'=>['#markup'=>($difference>0?"+":"").$difference], 'class'=>'currency_date '.($difference>0?'UP':'DOWN').''];
                 $curArr[] = $cur;
             }
             foreach ($curArr as $v) {
                 //
                 $rows[] = [
-                    'names'=> ['data' => ['#markup' => '<span class="currency_title" title="'.$v['3'].'">'.$v['1'].' / RUB</span>']],
-                    'date'=>['data' => ['#markup' => '<span class="currency_description">'.$v['4'].'</span>']],
-                    'rates'=>['data' => ['#markup' => '<span class="currency_date">'.$v['5'].'</span>']]
+                    'names'=> ['data' => ['#markup' => $v['1']], 'class'=>'currency_title'],
+                    'date'=>$v['4'],
+                    'rates'=>$v['5'],
                 ];
             }
         }
 
         $header = array(
-            array('data' => ['#markup' => '<span class="currency_kod">КОД</span>'],),
-            array('data' => ['#markup' => '<span class="currency_kod">КУРС</span>'],),
-            array('data' => ['#markup' => '<span class="currency_kod">РАЗНИЦА</span>'],),
+            array('data' => ['#markup' => 'КОД'], 'class'=>'currency_kod'),
+            array('data' => ['#markup' => 'КУРС'], 'class'=>'currency_kod'),
+            array('data' => ['#markup' => 'РАЗНИЦА'], 'class'=>'currency_kod'),
         );
         //
         $table = array(

@@ -3,7 +3,7 @@ Drupal 8, modules
 # 1. cbr - currency module
 this is the currency module which parses xml link CBR.RU
 
-![currency](https://github.com/otolaa/drupal8/blob/master/img/currencyDrupal8_0.png "this is the currency module which parses xml link CBR.RU")
+![currency](https://github.com/otolaa/drupal8/blob/master/img/currencyDrupal8_1.png "this is the currency module which parses xml link CBR.RU")
 # 2. weather - parsing pogoda module
 this is the parsing yandex.ru/pogoda
 
@@ -24,4 +24,4 @@ this is the parsing module schedule for cities film on the kinopoisk.ru
 ![kinopoisk for block](https://github.com/otolaa/drupal8/blob/master/img/kinoDrupal8.png "kinopoisk for block")
 kinopoisk all list film for pages /kinopoisk
 
-![kinopoisk for pages](https://github.com/otolaa/drupal8/blob/master/img/kinoList.jpg "kinopoisk for pages")
+![kinopoisk for pages](https://github.com/otolaa/drupal8/blob/master/img/kinoList.png "kinopoisk for pages")

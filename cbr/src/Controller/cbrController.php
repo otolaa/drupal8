@@ -27,8 +27,8 @@ class cbrController extends ControllerBase {
             //
             $cur[4] = (float)str_replace(",", ".", $cur[4]);
             $difference = round($cur[4] - (float)str_replace(",", ".", $second['ITEMS'][$k][4]), 4);
-            $cur[4] = $cur[4].($difference>0?"↑":"↓");
-            $cur[] = ($difference>0?"+":"").$difference;
+            $cur[4] = ['data'=>['#markup'=>$cur[4].($difference>0?"↑":"↓")], 'class'=>'currency_description '.($difference>0?'UP':'DOWN').''];
+            $cur[] = ['data'=>['#markup'=>($difference>0?"+":"").$difference], 'class'=>'currency_date '.($difference>0?'UP':'DOWN').''];
         }
         $header = array(
             array('data' => "Цифр. код"),

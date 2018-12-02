@@ -47,7 +47,7 @@ class weatherAPI{
                 $rd1 = $xpath->query('div/div',$rd->item(0))->item(1)->textContent;
                 $wDayItem[] = [$rd0,$rd1];
                 //
-                $rdc = $xpath->query('i',$rd->item(1))->item(0)->getAttribute('class');
+                $rdc = $xpath->query('img',$rd->item(1))->item(0)->getAttribute('class');
                 $wDayItem[] = $rdc;
                 //
                 $rd2 = $rd->item(2)->textContent;
